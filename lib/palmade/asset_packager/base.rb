@@ -13,13 +13,13 @@ module Palmade::AssetPackager
     end
     
     def build
-      @sources.keys.each do |package|
+      sources.keys.each do |package|
         build_package(package)
       end
     end
 
     def delete
-      @sources.keys.each do |package|
+      sources.keys.each do |package|
         delete_package(package)
       end
     end
