@@ -23,7 +23,9 @@ module Palmade::AssetPackager::Helpers
       if configuration.frameworks.include?(:action_controller)
         class << ActionController::Base
           cattr_accessor :asset_version
+          cattr_accessor :asset_skip_relative_url_root
           self.asset_version = 0
+          self.asset_skip_relative_url_root = false
         end
       end
     end
