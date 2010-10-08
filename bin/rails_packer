@@ -1,5 +1,11 @@
 #!/usr/bin/env ruby
 
-USE_RAILS = true
+asset_packager_path = File.expand_path(File.join(File.dirname(__FILE__), '../lib/palmade'))
+if File.exists?(asset_packager_path)
+  require File.join(asset_packager_path, 'asset_packager')
+else
+  gem 'asset_packager'
+  require 'palmade/asset_packager'
+end
 
-load File.join(File.dirname(__FILE__), 'asset_packer')
+Palmade::AssetPackager::RailsPackager.new(Dir.pwd).run(ARGV)

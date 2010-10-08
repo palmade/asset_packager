@@ -44,8 +44,6 @@ module Palmade::AssetPackager
         @asset_packager.build_package_list(default_conf_file)
       elsif File.exists?(default_conf_dir)
         @asset_packager.build_package_list(default_conf_dir, true)
-      else
-        #raise ConfigNotFound, "Default configuration file(s) not found"
       end
 
       case (argv.is_a?(Array) ? argv[0] : argv)
@@ -81,8 +79,11 @@ module Palmade::AssetPackager
     end
 
     def asset_exists?(asset_type, asset_path)
-      File.exists?(File.join(asset_packager.asset_root, asset_type, asset_path + ".#{Palmade::AssetPackager::Manager::ASSET_TYPE_MAP[asset_type.to_s][1]}")) ||
-        File.exists?(File.join(asset_packager.asset_root, asset_type, asset_path))
+      asset_root_path = File.join(asset_packager.asset_root, asset_type)
+      file_extension = Palmade::AssetPackager::Manager::ASSET_TYPE_MAP[asset_type.to_s][1]
+
+      File.exists?(File.join(asset_root_path, asset_path + ".#{file_extension}")) ||
+        File.exists?(File.join(asset_root_path, asset_path))
     end
   end
 end

@@ -7,7 +7,7 @@ require 'yaml'
 # 3rd level - asset files (may contain option parameters)
 
 module Palmade::AssetPackager
-  class Base
+  module BaseParser
     # build the package list and update the internal sources attribute
     def build_package_list(src_name, dir = false)
       logger.info("** Parsing package list #{src_name} (dir: #{dir ? 'true' : 'false' })")

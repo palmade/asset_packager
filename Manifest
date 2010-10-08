@@ -4,10 +4,8 @@ LICENSE
 Manifest
 README
 Rakefile
-bin/asset_packer
+asset_packager.gemspec
 bin/rails_packer
-lib/asset_packager/init.rb
-lib/asset_packer
 lib/palmade/asset_packager.rb
 lib/palmade/asset_packager/asset.rb
 lib/palmade/asset_packager/asset_base.rb
@@ -31,6 +29,3 @@ lib/palmade/extend/action_controller/base.rb
 lib/palmade/extend/action_controller/instance.rb
 lib/palmade/extend/action_view/base.rb
 lib/palmade/extend/cells/base.rb
-lib/palmade/jsmin.rb
-lib/palmade/rails_packager.rb
-test_bin/console

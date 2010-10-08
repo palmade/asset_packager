@@ -19,7 +19,6 @@ module Palmade::AssetPackager::Parser
     post_parse
   end
 
-
   protected
   
   # read a directory of asset_packages.yml files
@@ -48,5 +47,3 @@ module Palmade::AssetPackager::Parser
     sp.update_assets_from_yml(pdata)
   end
 end
-
-Palmade::AssetPackager::Base.send(:include, Palmade::AssetPackager::Parser)

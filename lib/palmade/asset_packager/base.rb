@@ -1,5 +1,8 @@
 module Palmade::AssetPackager
   class Base
+    include Palmade::AssetPackager::BaseParser
+    include Palmade::AssetPackager::BasePackage
+
     attr_accessor :logger
     attr_accessor :asset_root
 
@@ -25,6 +28,3 @@ module Palmade::AssetPackager
     end
   end
 end
-
-require File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/base_package')
-require File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/base_parser')
