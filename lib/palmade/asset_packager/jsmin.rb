@@ -1,5 +1,12 @@
+# Ruby 1.9 Compatibility Fix - the below isAlphanum uses Fixnum#ord to be compatible with Ruby 1.9 and 1.8.7
+# Fixnum#ord is not found by default in 1.8.6, so monkey patch it in:
+if RUBY_VERSION == '1.8.6'
+  class Fixnum; def ord; return self; end; end
+end
+
 module Palmade::AssetPackager
   class Jsmin
+
     EOF = -1
     
     class << self
@@ -21,8 +28,8 @@ module Palmade::AssetPackager
     def isAlphanum(c)
       return false if !c || c == EOF
       return ((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') ||
-       (c >= 'A' && c <= 'Z') || c == '_' || c == '$' ||
-      c == '\\' || c[0] > 126)
+              (c >= 'A' && c <= 'Z') || c == '_' || c == '$' ||
+              c == '\\' || c[0].ord > 126)
     end
     
     # get -- return the next character from stdin. Watch out for lookahead. If
@@ -102,8 +109,10 @@ module Palmade::AssetPackager
       if(a==1 || a==2 || a==3)
         @the_b = mynext
         if (@the_b == "/" && (@the_a == "(" || @the_a == "," || @the_a == "=" ||
-          @the_a == ":" || @the_a == "[" || @the_a == "!" ||
-          @the_a == "&" || @the_a == "|" || @the_a == "?"))
+                              @the_a == ":" || @the_a == "[" || @the_a == "!" ||
+                              @the_a == "&" || @the_a == "|" || @the_a == "?" ||
+                              @the_a == "{" || @the_a == "}" || @the_a == ";" ||
+                              @the_a == "\n"))
           @target_content.write @the_a
           @target_content.write @the_b
           while (true)
@@ -161,7 +170,7 @@ module Palmade::AssetPackager
             end
           when "\n"
             case (@the_a)
-            when "}","]",")","+","-","\"","\\"
+            when "}","]",")","+","-","\"","\\", "'", '"'
               action(1)
             else
               if (isAlphanum(@the_a))

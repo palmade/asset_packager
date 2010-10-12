@@ -200,8 +200,8 @@ module Palmade::AssetPackager::Types
     end
     
     def parse_source_hash(sh, sh_options = { })
-      sh.assert_valid_keys(VALID_SOURCE_PARAMS)
-      sh_options.assert_valid_keys(SOURCE_OPTIONS)
+      assert_valid_keys(sh, VALID_SOURCE_PARAMS)
+      assert_valid_keys(sh_options, SOURCE_OPTIONS)
       
       if sh.include?('package')
         assets << Palmade::AssetPackager::AssetBase.new(self, "package:#{sh['package']}", sh_options)
@@ -209,7 +209,7 @@ module Palmade::AssetPackager::Types
     end
     
     def parse_source_line(sl, sl_options = { })
-      sl_options.assert_valid_keys(SOURCE_OPTIONS)
+      assert_valid_keys(sl_options, SOURCE_OPTIONS)
       
       line_source, line_options = split_options(sl)
       sl_options.update({ :line_options => line_options }) unless line_options.nil? || line_options.empty?
@@ -238,5 +238,14 @@ module Palmade::AssetPackager::Types
         end
       end
     end
+
+    protected
+
+    def assert_valid_keys(hash, *valid_keys)
+      hash ||= {}
+      unknown_keys = hash.keys - [valid_keys].flatten
+      raise(ArgumentError, "Unknown key(s): #{unknown_keys.join(", ")}") unless unknown_keys.empty?
+    end
+
   end
 end

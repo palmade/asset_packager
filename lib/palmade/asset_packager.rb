@@ -1,7 +1,3 @@
-unless defined?(Palmade)
-  raise "Please load palmade_extensions first!"
-end
-
 require 'logger'
 require 'fileutils'
 
@@ -11,7 +7,7 @@ ASSET_PACKAGER_ROOT_DIR = File.join(ASSET_PACKAGER_LIB_DIR, '..')
 
 unless defined?(PALMADE_DEFAULT_LOGGER)
   PALMADE_DEFAULT_LOGGER = Logger.new($stdout)
-  PALMADE_DEFAULT_LOGGER.level = Logger::DEBUG
+  PALMADE_DEFAULT_LOGGER.level = Logger::INFO
 end
 
 module Palmade
@@ -20,6 +16,8 @@ module Palmade
     autoload :Jsmin, File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/jsmin')
     autoload :Types, File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/types')
     autoload :Base, File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/base')
+    autoload :BasePackage, File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/base_package')
+    autoload :BaseParser, File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/base_parser')
     autoload :Helpers, File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/helpers')
     autoload :Manager, File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/manager')
     autoload :RailsPackager, File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/rails_packager')
@@ -28,4 +26,3 @@ module Palmade
     COMPILED_Z = 2
   end
 end
-

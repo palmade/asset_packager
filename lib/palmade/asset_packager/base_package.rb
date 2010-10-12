@@ -1,5 +1,6 @@
 module Palmade::AssetPackager
-  class Base
+  module BasePackage
+
     def find_package(package_name, asset_type = nil)
       sp = sources[package_name]
       asset_type.nil? ? sp : sp[asset_type] unless sp.nil?
@@ -22,5 +23,6 @@ module Palmade::AssetPackager
         sp.destroy_package
       end
     end
+
   end
 end
