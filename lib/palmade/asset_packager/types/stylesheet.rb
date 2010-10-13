@@ -10,7 +10,7 @@ module Palmade::AssetPackager::Types
 
     def build
       logger.debug("Creating combined version (#{target_filename})")
-      
+
       FileUtils.mkpath(File.dirname(target_filename))
       File.open(target_filename, "w") do |f|
         assets.each do |a|
@@ -25,7 +25,7 @@ module Palmade::AssetPackager::Types
           f.write("\n\n")
         end
       end
-      
+
       logger.debug("Creating deflated version (#{target_filename_z})")
       deflate(File.read(target_filename), target_filename_z)
     end
@@ -52,10 +52,10 @@ module Palmade::AssetPackager::Types
       def css_read_file(asset_filename, copy_assets = true, first_call = true)
         relative_dir = File.dirname(asset_filename)
         partial = File.read(asset_filename)
-        
+
         partial = partial.split(/[\n\r]/).each { |ln|
           asset_url = nil
-          if ln =~ /url\(\s*[\"\']([^\/].+)[\"\']\s*\)/ || 
+          if ln =~ /url\(\s*[\"\']([^\/].+)[\"\']\s*\)/ ||
               ln =~ /url\(\s*([^\/][^\"\']+)\s*\)/
             asset_url = $~[1]
           end
@@ -88,12 +88,12 @@ module Palmade::AssetPackager::Types
           ln.strip
         }.join("\n")
       end
-      
+
       def css_copy_asset_file(asset_absolute_path, dest_asset)
         if File.exists?(dest_asset)
           if File.size(asset_absolute_path) != File.size(dest_asset)  ||
             File.mtime(asset_absolute_path) > File.mtime(dest_asset)
-            
+
             logger.debug("...  copying asset file #{dest_asset}")
             FileUtils.copy(asset_absolute_path, dest_asset)
           else

@@ -8,7 +8,7 @@ module Palmade::AssetPackager
   class Jsmin
 
     EOF = -1
-    
+
     class << self
       def minify(source)
         self.new.minify(source)
@@ -18,11 +18,11 @@ module Palmade::AssetPackager
     def initialize
       @the_a = ""
       @the_b = ""
-      
+
       @source_content = nil
       @target_content = nil
     end
-    
+
     # isAlphanum -- return true if the character is a letter, digit, underscore,
     # dollar sign, or non-ASCII character
     def isAlphanum(c)
@@ -31,7 +31,7 @@ module Palmade::AssetPackager
               (c >= 'A' && c <= 'Z') || c == '_' || c == '$' ||
               c == '\\' || c[0].ord > 126)
     end
-    
+
     # get -- return the next character from stdin. Watch out for lookahead. If
     # the character is a control character, translate it to a space or linefeed.
     def get()
@@ -42,14 +42,14 @@ module Palmade::AssetPackager
       return "\n" if (c == "\r")
       return " "
     end
-    
+
     # Get the next character without getting it.
     def peek()
       lookaheadChar = @source_content.getc
       @source_content.ungetc(lookaheadChar)
       return lookaheadChar.chr
     end
-    
+
     # mynext -- get the next character, excluding comments.
     # peek() is used to see if a '/' is followed by a '/' or '*'.
     def mynext()
@@ -80,8 +80,8 @@ module Palmade::AssetPackager
       end
       return c
     end
-    
-    
+
+
     # action -- do something! What you do is determined by the argument: 1
     # Output A. Copy B to A. Get the next B. 2 Copy B to A. Get the next B.
     # (Delete A). 3 Get the next B. (Delete B). action treats a string as a
@@ -131,7 +131,7 @@ module Palmade::AssetPackager
         end
       end
     end
-    
+
     def minify(source_content)
       @source_content = StringIO.new(source_content)
       @target_content = StringIO.new
@@ -184,7 +184,7 @@ module Palmade::AssetPackager
           end
         end
       end
-      
+
       @target_content.rewind
       @target_content.read
     end

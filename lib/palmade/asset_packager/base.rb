@@ -14,7 +14,7 @@ module Palmade::AssetPackager
     def sources
       @sources ||= { }
     end
-    
+
     def build
       sources.keys.each do |package|
         build_package(package)

@@ -25,7 +25,7 @@ module Palmade::AssetPackager::Types
           f.write("\n\n")
         end
       end
-      
+
       logger.debug("Creating deflated version (#{target_filename_z})")
       deflate(File.read(target_filename), target_filename_z)
     end

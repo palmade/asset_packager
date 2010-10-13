@@ -2,10 +2,10 @@ module Palmade::AssetPackager
   class Manager
     attr_accessor :logger
     attr_accessor :assets
-    
+
     ASSET_TYPE_MAP =  {
-      'javascripts' => [ :Javascript, 'js' ], 
-      'stylesheets' => [ :Stylesheet, 'css' ], 
+      'javascripts' => [ :Javascript, 'js' ],
+      'stylesheets' => [ :Stylesheet, 'css' ],
       'images' => [ :Image, 'png' ]
     }
 
@@ -16,11 +16,11 @@ module Palmade::AssetPackager
       @logger = logger
       @assets = { }
     end
-  
+
     def [](asset_type)
       @assets[asset_type]
     end
-    
+
     def find_assets(asset_type, asset_options)
       case
       when asset_options.include?('package')
@@ -58,28 +58,28 @@ module Palmade::AssetPackager
         end
       end
     end
-  
+
     def update_options(asset_type, opts)
       apt = get_or_create_asset(asset_type)
       apt.update_options(opts)
     end
-  
+
     def update_asset(asset_type, source, source_options = { })
       apt = get_or_create_asset(asset_type)
       apt.update_asset(source, source_options)
     end
-  
+
     def post_parse
       @assets.values.each { |apt| apt.post_parse }
     end
-  
+
     def build_package
       @assets.values.each do |apt|
         logger.info("=> Asset type: #{@package_name}.#{apt.asset_type}")
         apt.build
       end
     end
-  
+
     def destroy_package
       @assets.values.each do |apt|
         apt.destroy
