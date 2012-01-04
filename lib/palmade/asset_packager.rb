@@ -26,5 +26,6 @@ module Palmade
 
     COMPILED = 1
     COMPILED_Z = 2
+
   end
 end
