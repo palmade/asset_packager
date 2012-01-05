@@ -7,7 +7,7 @@ module Palmade::AssetPackager
     attr_accessor :asset_root
 
     def initialize(logger)
-      @logger ||= logger || PALMADE_DEFAULT_LOGGER
+      @logger ||= logger || Palmade::AssetPackager.logger
       @asset_root ||= Dir.pwd
     end
 

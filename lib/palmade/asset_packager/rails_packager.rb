@@ -9,7 +9,7 @@ module Palmade::AssetPackager
 
     def initialize(rails_root)
       @rails_root = rails_root
-      @logger ||= PALMADE_DEFAULT_LOGGER
+      @logger ||= Palmade::AssetPackager.logger
     end
 
     def run(argv)
@@ -34,11 +34,7 @@ module Palmade::AssetPackager
       @asset_packager = Palmade::AssetPackager::Base.new(@logger)
       @asset_packager.asset_root = File.join(@rails_root, 'public')
 
-      if File.exists?(default_conf_file)
-        @asset_packager.build_package_list(default_conf_file)
-      elsif File.exists?(default_conf_dir)
-        @asset_packager.build_package_list(default_conf_dir, true)
-      end
+      @asset_packager.build_package_list(default_conf_dir, true)
     end
 
     def build
@@ -65,7 +61,7 @@ module Palmade::AssetPackager
     end
 
     def default_conf_file
-      File.join(@rails_root, 'config/asset_packages.yml')
+      File.join(@rails_root, 'config/asset_packager.yml')
     end
 
     def default_conf_dir
