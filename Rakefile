@@ -4,6 +4,9 @@ require 'rspec/core/rake_task'
 namespace :spec do
   task :prep_rails1 do
     puts 'Preparing environment for Rails 1.x RSpec code examples'
+    unless RUBY_VERSION =~ /^1\.8/
+      raise "Rails 1.x doesn't support Ruby versions other than 1.8.x"
+    end
     ENV['RAILS_VERSION'] = '1'
     `bundle`
   end

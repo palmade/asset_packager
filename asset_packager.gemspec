@@ -16,5 +16,5 @@ Gem::Specification.new do |s|
   s.rdoc_options     = ['--line-numbers', '--inline-source', '--title', 'asset_packager', '--main', 'README']
 
   s.add_development_dependency 'rspec'
-  s.add_development_dependency 'cucumber'
+  s.add_development_dependency 'rake'
 end
