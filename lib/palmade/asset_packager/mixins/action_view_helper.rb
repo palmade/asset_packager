@@ -9,14 +9,6 @@ module Palmade::AssetPackager
       asset_tags('stylesheets', options)
     end
 
-    def javascript_include(*sources)
-      controller.asset_include('javascripts', *sources)
-    end
-
-    def stylesheet_include(*sources)
-      controller.asset_include('stylesheets', *sources)
-    end
-
     protected
 
     def asset_tags(asset_type, options)
