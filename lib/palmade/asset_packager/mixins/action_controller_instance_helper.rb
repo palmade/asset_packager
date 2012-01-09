@@ -7,7 +7,7 @@ module Palmade::AssetPackager
           :asset_in_production?, :asset_include, :asset_managers, :compute_public_path,
           :compute_asset_host, :compute_rails_asset_id
 
-        helper_method :asset_manager, :asset_managers, :asset_in_production?, :asset_deflate_ok?
+        helper_method :asset_manager, :asset_managers, :asset_in_production?, :asset_deflate_ok?, :javascript_include, :stylesheet_include
 
         if respond_to?(:before_render)
           before_render :asset_before_render_hook
