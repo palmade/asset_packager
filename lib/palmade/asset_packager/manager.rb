@@ -53,7 +53,12 @@ module Palmade::AssetPackager
           when Hash
             update_options(asset_type, sl)
           when String
-            update_asset(asset_type, sl)
+            # get absolute path to asset
+            asset_root = File.join(@asset_root, asset_type)
+            Dir.glob(File.join(asset_root, sl)).each do |source|
+              # remove the 'extra' path
+              update_asset(asset_type, source.sub(/^#{asset_root}\//, ''))
+            end
           end
         end
       end
