@@ -8,48 +8,67 @@ module Palmade::AssetPackager
     attr_reader :package_assets
     attr_reader :package_dir
     attr_reader :public_root
-    attr_reader :others
+    attr_reader :options
 
+    alias :minify_assets?  :minify_assets
+    alias :package_assets? :package_assets
+    alias :deflate_assets? :deflate_assets
 
-    def initialize(options = {})
-      @asset_root      = options.fetch(:asset_root) { default_asset_root }
-      @deflate_assets  = true
-      @minify_assets   = true
-      @package_assets  = true
-      @package_dir     = default_package_dir
-      @public_root     = default_public_root
+    def initialize(params = {})
+      @asset_root     = default_asset_root
+      @deflate_assets = true
+      @minify_assets  = true
+      @package_assets = true
+      @package_dir    = default_package_dir
+      @public_root    = default_public_root
 
-      @logger          = options.fetch(:logger) { Palmade::AssetPackager::logger }
+      @logger         = params.fetch(:logger) { Palmade::AssetPackager::logger }
 
-      @others          = {}
+      @options        = {}
     end
 
     def package_path
       @package_path ||= File.join(@public_root, @package_dir)
     end
 
-    def load_configuration(config_file = default_config_file, config_dir = default_config_directory)
-      conf = load_configuration_file(config_file)
-      conf.merge!(load_configuration_dir(config_dir)) if File.exists? config_dir
+    def load_configuration(options={})
+      @asset_root = options.fetch(:asset_root)  { default_asset_root }
 
-      @asset_host     = conf.delete(:asset_host)     { nil }
-      @asset_version  = conf.delete(:asset_version)  { nil }
-      @deflate_assets = conf.delete(:deflate_assets) { true }
-      @minify_assets  = conf.delete(:minify_assets)  { true }
-      @package_assets = conf.delete(:package_assets) { true }
-      @package_dir    = conf.delete(:package_dir)    { default_package_dir }
-      @public_root    = conf.delete(:public_root)    { default_public_root }
+      config_file = options.fetch(:config_file) { default_config_file }
+      config_dir  = options.fetch(:config_dir)  { default_config_dir }
 
-      @others = conf
+      load_options_from_configuration_files(config_file, config_dir)
+
+      load_options(options)
     end
 
-    def load_configuration_file(config_file = default_config_file)
+    private
+
+    def load_options_from_configuration_files(config_file, config_dir)
+      conf_file = load_configuration_file(config_file)
+      conf_dir  = load_configuration_dir(config_dir)
+
+      conf =
+        if conf_file and conf_dir
+          conf_file.merge(conf_dir)
+        elsif conf_file.nil? and conf_dir
+          conf_dir
+        end
+
+      load_options(conf)
+    end
+
+    def load_configuration_file(config_file)
+      return unless valid_config_file? config_file
+
       @logger.info "Loading configuration file: #{config_file}"
 
       parse_configuration_file(config_file)
     end
 
-    def load_configuration_dir(config_dir = default_config_directory)
+    def load_configuration_dir(config_dir)
+      return unless valid_config_dir? config_dir
+
       @logger.info "Loading configuration files inside #{config_dir}"
 
       config_files = Dir.glob(File.join(config_dir, '**', '*.yml')).sort
@@ -59,14 +78,44 @@ module Palmade::AssetPackager
       end.inject(:merge)
     end
 
-    private
+    ##
+    # Sets known options. Unknown options are stored in @options
+    #
+    def load_options(options={})
+      return unless options
+
+      @asset_host     = options[:asset_host]     unless options[:asset_host].nil?
+      @asset_version  = options[:asset_version]  unless options[:asset_version].nil?
+      @deflate_assets = options[:deflate_assets] unless options[:deflate_assets].nil?
+      @minify_assets  = options[:minify_assets]  unless options[:minify_assets].nil?
+      @package_assets = options[:package_assets] unless options[:package_assets].nil?
+      @package_dir    = options[:package_dir]    unless options[:package_dir].nil?
+      @public_root    = options[:public_root]    unless options[:public_root].nil?
+
+      @options.merge!(options)
+    end
+
+    def valid_config_file?(config_file)
+      unless exists = File.exists?(config_file)
+        @logger.warn "Given configuration file not found (#{config_file})"
+      end
+      exists
+    end
+
+    def valid_config_dir?(config_dir)
+      unless exists = File.exists?(config_dir)
+        @logger.warn "Given configuration directory doesn't exist (#{config_dir})"
+      end
+
+      if exists and not directory = File.directory?(config_dir)
+        @logger.warn "Given configuration directory isn't really a directory (#{config_dir})"
+      end
+
+      exists and directory
+    end
+
     def parse_configuration_file(config_file)
       @logger.debug "Parsing configuration file: #{config_file}"
-
-      unless File.exists?(config_file)
-        @logger.warn "Configuration file, #{config_file}, not found"
-        return {}
-      end
 
       Utils.symbolize_keys(YAML.load(ERB.new(File.read(config_file)).result))
     end
@@ -79,7 +128,7 @@ module Palmade::AssetPackager
       File.join(asset_root, 'config', 'asset_packager.yml')
     end
 
-    def default_config_directory
+    def default_config_dir
       File.join(asset_root, 'config', 'asset_packages')
     end
 

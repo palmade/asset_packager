@@ -1,10 +1,16 @@
-module Palmade::AssetPackager
-  class Jsmin
+module Palmade::AssetPackager::Packers
+  class Javascript
 
     EOF = -1
     
     class << self
-      def minify(source)
+      def concatenate(sources, options={})
+        sources.collect { |source|
+          File.open(source, 'rb:UTF-8') { |f| f.read }
+        }.join("\n\n")
+      end
+
+      def pack(source)
         self.new.minify(source)
       end
     end
