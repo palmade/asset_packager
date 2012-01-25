@@ -23,5 +23,9 @@ module Palmade::AssetPackager
         arg
       end
     end
+
+    def self.extract_options!(array)
+      array.last.is_a?(::Hash) ? array.pop : {}
+    end
   end
 end

@@ -35,6 +35,14 @@ module Palmade::AssetPackager
            File.join(public_root, 'javascripts', 'a_script.js')]
         end
 
+        let(:wrong_absolute_asset) do
+          File.join(public_root, 'javascripts', 'absolute', 'package.js')
+        end
+
+        let(:correct_absolute_asset) do
+          File.join(public_root, 'absolute', 'package.js')
+        end
+
         it "should not return nil" do
           subject.assets[:javascripts].should_not be_nil
         end
@@ -54,6 +62,11 @@ module Palmade::AssetPackager
         it "should not include duplicate asset files" do
           subject.assets[:javascripts].count(
            File.join(public_root, 'javascripts', 'jquery.js')).should eql 1
+        end
+
+        it "should not prepend the asset type for absolute paths" do
+          subject.assets[:javascripts].should_not include wrong_absolute_asset
+          subject.assets[:javascripts].should include correct_absolute_asset
         end
       end
 
@@ -191,6 +204,7 @@ module Palmade::AssetPackager
 
       context "package_assets is enabled" do
         before { Palmade::AssetPackager.stub_chain(:configuration, :package_assets?) { true } }
+
         it "should return the url for the package" do
           subject.paths(:javascripts).should eql '/assets/javascripts/signin.js'
         end

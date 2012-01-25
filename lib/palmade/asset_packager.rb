@@ -9,6 +9,7 @@ ASSET_PACKAGER_ROOT_DIR = File.join(ASSET_PACKAGER_LIB_DIR, '..')
 module Palmade
   module AssetPackager
     autoload :Runner,        File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/runner')
+    autoload :Asset,         File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/asset')
     autoload :AssetBase,     File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/asset_base')
     autoload :Configuration, File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/configuration')
     autoload :Jsmin,         File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/jsmin')

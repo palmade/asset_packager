@@ -65,13 +65,7 @@ module Palmade::AssetPackager
     end
 
     def asset_include_to_am(am, asset_type, *sources)
-      if sources.size > 1
-        source_options = sources.last.is_a?(Hash) ? sources.pop : { }
-        source_options = Palmade::AssetPackager::Utils.stringify_keys(source_options)
-        am.update_asset(asset_type, sources, source_options)
-      else
-        am.update_asset(asset_type, sources[0])
-      end
+      am.asset_include(asset_type, *sources)
     end
 
     def process_with_asset_packager(*args)

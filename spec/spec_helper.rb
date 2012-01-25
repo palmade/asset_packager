@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'logger'
+require 'pathname'
 
 require 'palmade/asset_packager'
 
@@ -26,7 +27,7 @@ module Helpers
   def assets_fixture
     @assets_fixture ||= {
       :base   => {
-        :javascripts => ['base_1.js', 'base_2.js', 'jquery.js'],
+        :javascripts => ['{base_1,base_2}.js', 'jquery.js'],
         :stylesheets => ['style.css', 'awesome.css']
       },
       :signin => {
@@ -41,11 +42,27 @@ module Helpers
 
   def abs_assets_fixture(name)
     assets_fixture[name.to_sym].inject({}) do |abs_assets, (type, assets)|
-      abs_assets[type] = assets.collect do |asset|
-          File.join(public_root, type.to_s, asset)
-        end
+      new_assets = assets.inject([]) do |new_assets, asset|
+      abs_path = Pathname.new(asset).absolute? ?
+        File.join(public_root, asset):
+        File.join(public_root, type.to_s, asset)
+        new_assets.concat(Dir.glob(abs_path))
+      end
+
+      abs_assets[type] = new_assets.uniq
       abs_assets
     end
+  end
+
+  def url_assets_fixture(name)
+    abs_assets_fixture(name.to_sym).inject({}) do |url_assets, (type, assets)|
+      url_assets[type] = assets.map do |asset|
+        asset.sub(/^#{public_root}/, '')
+      end.uniq
+
+      url_assets
+    end
+
   end
 end
 
