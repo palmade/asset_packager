@@ -12,41 +12,13 @@ module Palmade::AssetPackager
     protected
 
     def asset_tags(asset_type, options)
-      asset_options = { :rendered => false }
-      asset_options.update(options)
+      options[:deflate_assets] = asset_deflate_ok?
 
-      case
-      when options.include?(:set)
-        asset_options[:set] = options[:set]
-      when options.include?(:package)
-        asset_options[:package] = options[:package]
-      end
-
-      # this flag only affects the packaged assets
-      if asset_in_production?
-        if asset_deflate_ok?
-          compiled = Palmade::AssetPackager::COMPILED_Z
-        else
-          compiled = Palmade::AssetPackager::COMPILED
-        end
-      else
-        compiled = false
-      end
-
-      assets = spider_am(asset_type, asset_options)
+      assets = spider_am(asset_type, options)
 
       assets.collect do |asset|
-        asset.rendered = true
-
-        case asset.source(compiled)
-        when String
-          render_asset(asset_type, asset.source)
-        when Array
-          asset.source.collect do |as|
-            render_asset(asset_type, as)
-          end.join("\n")
-        end
-      end.join("\n") unless assets.nil? || assets.empty?
+        render_asset(asset_type, asset)
+      end.join("\n") unless assets.nil? or assets.empty?
     end
 
     private
@@ -64,7 +36,8 @@ module Palmade::AssetPackager
       # only get the instance asset_manager, to set the rendered flag properly
       # the commented version above, is not thread-safe!!!
       asset_manager.nil? ? [ ] :
-        asset_manager.find_assets(asset_type, Palmade::AssetPackager::Utils.stringify_keys(asset_options))
+        asset_manager.get_assets(asset_type,
+                                 Palmade::AssetPackager::Utils.symbolize_keys(asset_options))
     end
 
     # WATCH OUT!!!

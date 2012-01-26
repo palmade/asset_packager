@@ -6,7 +6,7 @@ module Palmade::AssetPackager
     let(:assets)   do
       assets_fixture[:signin]
     end
-    subject { Package.new(:signin, assets, packager) }
+    subject { Package.new(:signin, packager, assets) }
 
     let(:configuration) do
       configuration = double(Configuration)

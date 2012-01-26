@@ -54,7 +54,7 @@ module Palmade::AssetPackager
       end
 
       packages.each.inject({}) do |packages, package|
-        packages[package[0]] = Palmade::AssetPackager::Package.new(*package, self)
+        packages[package[0]] = Palmade::AssetPackager::Package.new(package[0], self, package[1])
         packages
       end
     end

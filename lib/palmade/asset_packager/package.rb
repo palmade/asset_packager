@@ -5,10 +5,10 @@ module Palmade::AssetPackager
     ASSET_EXTENSIONS = {:javascripts => 'js',
                         :stylesheets => 'css'}
 
-    def initialize(name, assets_hash, packager, logger = nil)
-      @logger   = logger || Palmade::AssetPackager.logger
+    def initialize(name, packager, options = {})
       @name     = name
-      @assets   = initialize_assets(assets_hash)
+      @logger   = options.delete(:logger) { Palmade::AssetPackager.logger }
+      @assets   = initialize_assets(options)
       @packager = packager
 
       @dependencies_loaded = false

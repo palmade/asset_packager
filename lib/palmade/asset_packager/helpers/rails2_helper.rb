@@ -3,9 +3,6 @@ module Palmade::AssetPackager
     def self.setup(configuration)
       add_configuration_options(configuration)
       add_extensions(configuration)
-
-      rp = Palmade::AssetPackager::RailsPackager.new(configuration.root_path)
-      rp.run("rails_attach")
     end
 
     protected
