@@ -14,7 +14,7 @@ module Palmade::AssetPackager
     def asset_tags(asset_type, options)
       options[:deflate_assets] = asset_deflate_ok?
 
-      assets = spider_am(asset_type, options)
+      assets = get_assets(asset_type, options)
 
       assets.collect do |asset|
         render_asset(asset_type, asset)
@@ -32,17 +32,15 @@ module Palmade::AssetPackager
       end
     end
 
-    def spider_am(asset_type, asset_options = { })
-      # only get the instance asset_manager, to set the rendered flag properly
-      # the commented version above, is not thread-safe!!!
-      asset_manager.nil? ? [ ] :
+    def get_assets(asset_type, asset_options = {})
+      asset_manager.nil? ? [] :
         asset_manager.get_assets(asset_type,
                                  Palmade::AssetPackager::Utils.symbolize_keys(asset_options))
     end
 
     # WATCH OUT!!!
     # the following are overrides, and may not work with Rails version, later than 1.2.3
-    def compute_public_path(source, dir = nil, ext = nil, options = { })
+    def compute_public_path(source, dir = nil, ext = nil, options = {})
       controller.compute_public_path(source, dir, ext, options)
     end
 
