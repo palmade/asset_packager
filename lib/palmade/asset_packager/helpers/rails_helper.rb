@@ -11,14 +11,14 @@ module Palmade::AssetPackager
     def self.load_rails_configuration(configuration)
       asset_packager_config = Palmade::AssetPackager.configuration
 
-      unless asset_packager_config[:asset_version].nil?
+      if asset_version = asset_packager_config.asset_version
         configuration.action_controller.asset_version = \
-            ActionController::Base.asset_version = asset_packager_config[:asset_version]
+            ActionController::Base.asset_version = asset_version
       end
 
-      unless asset_packager_config[:asset_host].nil?
+      if asset_host = asset_packager_config.asset_host
         configuration.action_controller.asset_host = \
-            ActionController::Base.asset_host = asset_packager_config[:asset_host]
+            ActionController::Base.asset_host = asset_host
       end
     end
 

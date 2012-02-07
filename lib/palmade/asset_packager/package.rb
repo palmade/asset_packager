@@ -173,7 +173,7 @@ module Palmade::AssetPackager
           end
         end
 
-        a[type] and a[type].flatten!.uniq!
+        a[type] and not a[type].empty? and a[type].flatten!.uniq!
         @logger.debug "\tAdded #{a[type].count} #{type} for #{@name}" if a[type]
       end
       a
