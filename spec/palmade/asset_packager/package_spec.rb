@@ -86,9 +86,14 @@ module Palmade::AssetPackager
            File.join(public_root, 'javascripts', 'base_2.js')]
         end
 
+        let(:foo_assets) do
+          [File.join(public_root, 'javascripts', 'foo_1.js')]
+        end
+
         let(:ordered_assets) do
            [File.join(public_root, 'javascripts', 'base_1.js'),
             File.join(public_root, 'javascripts', 'base_2.js'),
+            File.join(public_root, 'javascripts', 'foo_1.js'),
             "#{public_root}/javascripts/a_script.js",
              "#{public_root}/javascripts/another_script.js",
              "#{public_root}/javascripts/jquery.js",
@@ -97,10 +102,11 @@ module Palmade::AssetPackager
         end
 
         before do
-          assets[:javascripts] << {:include => ["base"]}
+          assets[:javascripts] << {:include => ["base", "foo"]}
           packager.stub(:packages) do
             {
               :base   => {:javascripts => base_assets},
+              :foo    => {:javascripts => foo_assets}
             }
           end
         end

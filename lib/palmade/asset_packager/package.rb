@@ -106,7 +106,7 @@ module Palmade::AssetPackager
       return if @dependencies_loaded
 
       dependencies.each do |type, deps|
-        deps.each do |dep|
+        deps.reverse_each do |dep|
           @assets[type] = @packager.packages[dep][type] + @assets[type]
         end
       end
