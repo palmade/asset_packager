@@ -53,6 +53,8 @@ module Palmade::AssetPackager
           conf_file.merge(conf_dir)
         elsif conf_file.nil? and conf_dir
           conf_dir
+        else
+          conf_file
         end
 
       load_options(conf)
