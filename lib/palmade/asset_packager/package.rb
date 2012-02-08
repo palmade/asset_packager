@@ -167,7 +167,13 @@ module Palmade::AssetPackager
 
             abs_path = add_extension_if_needed(abs_path, type)
 
-            a[type] << Dir.glob(abs_path)
+            found_assets = Dir.glob(abs_path)
+
+            unless found_assets.empty?
+              a[type] << Dir.glob(abs_path)
+            else
+              @logger.error "Asset file not found: (#{abs_path})"
+            end
           when Hash
             add_dependencies(type, asset[:include])
           end

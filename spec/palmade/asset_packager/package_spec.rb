@@ -22,6 +22,32 @@ module Palmade::AssetPackager
       Palmade::AssetPackager.stub(:configuration) { configuration }
     end
 
+    describe "initialization," do
+      context "a source asset doesn't exist, " do
+        let(:logger) { double(Logger) }
+        let(:options) do
+          assets_fixture[:signin].merge({
+            :logger => logger
+          })
+        end
+
+        before do
+          logger.stub!(:debug)
+          logger.stub!(:info)
+          logger.stub!(:warn)
+        end
+        after { Package.new(:singin, packager, options) }
+
+        it "should log an error" do
+          logger.should_receive(:error).with(/Asset file not found/)
+        end
+
+        it "should display the offending asset file" do
+          logger.should_receive(:error).with(/doesnt_exist\.js/)
+        end
+      end
+    end
+
     describe "#assets," do
       context "no asset type given," do
         it "should return all asset files" do
