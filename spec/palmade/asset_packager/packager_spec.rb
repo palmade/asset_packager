@@ -128,7 +128,7 @@ module Palmade::AssetPackager
             and_yield(file)
 
           file.should_receive(:<<).with('foo')
-          deflate_object.should_receive(:deflate).with('hello').and_return('--foo****')
+          deflate_object.should_receive(:deflate).with('hello', Zlib::FINISH).and_return('--foo****')
         end
       end
     end

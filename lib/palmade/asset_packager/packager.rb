@@ -41,7 +41,7 @@ module Palmade::AssetPackager
       File.open("#{filename}.z", 'wb+') do |f|
         zd = Zlib::Deflate.new(Zlib::BEST_COMPRESSION, 15, Zlib::MAX_MEM_LEVEL)
         # output raw deflate
-        f << zd.deflate(contents)[2..-5]
+        f << zd.deflate(contents, Zlib::FINISH)[2..-5]
         zd.close
       end
     end
