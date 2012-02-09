@@ -11,13 +11,15 @@ module Palmade::AssetPackager
         initialize_packages options.fetch(:packages)
     end
 
-    def packemall
+    def packemall(options={})
       @logger.info "Nothing to pack" and return if @packages.empty?
 
       @logger.info "Packing packages..."
 
       @packages.each do |name, package|
-        output_dir = Palmade::AssetPackager.configuration.package_path
+        output_dir =
+          options.fetch(:package_path) {
+            Palmade::AssetPackager.configuration.package_path }
 
         package.assets.keys.each do |type|
           cache(name, type, package.packit(type), output_dir)

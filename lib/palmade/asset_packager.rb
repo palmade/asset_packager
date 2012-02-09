@@ -10,6 +10,7 @@ module Palmade
   module AssetPackager
     autoload :Runner,        File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/runner')
     autoload :Asset,         File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/asset')
+    autoload :Bundler,       File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/bundler')
     autoload :Configuration, File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/configuration')
     autoload :Helpers,       File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/helpers')
     autoload :Manager,       File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/manager')
@@ -29,7 +30,7 @@ module Palmade
       @logger ||= create_logger
     end
 
-    def self.boot!(options ={})
+    def self.boot!(options = {})
       self.logger.level = Logger::DEBUG if options[:debug]
 
       @configuration = Configuration.new
@@ -48,8 +49,13 @@ module Palmade
                                             :packages => self.configuration.options)
     end
 
-    def self.package!
-      packager.packemall
+    def self.package!(options={})
+      packager.packemall(options)
+    end
+
+    def self.bundle(options={})
+      bundler = AssetPackager::Bundler.new(options)
+      bundler.bundle
     end
 
   end

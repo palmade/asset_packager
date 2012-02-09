@@ -1,11 +1,13 @@
 module Palmade::AssetPackager
   class Configuration
+    attr_reader :app_name
     attr_reader :asset_host
     attr_reader :asset_root
     attr_reader :asset_version
     attr_reader :deflate_assets
     attr_reader :minify_assets
     attr_reader :package_assets
+    attr_reader :package_path
     attr_reader :package_dir
     attr_reader :public_root
     attr_reader :options
@@ -21,14 +23,12 @@ module Palmade::AssetPackager
       @package_assets = true
       @package_dir    = default_package_dir
       @public_root    = default_public_root
+      @package_path   = default_package_path
+      @asset_version  = default_asset_version
 
       @logger         = params.fetch(:logger) { Palmade::AssetPackager::logger }
 
       @options        = {}
-    end
-
-    def package_path
-      @package_path ||= File.join(@public_root, @package_dir)
     end
 
     def load_configuration(options={})
@@ -86,6 +86,7 @@ module Palmade::AssetPackager
     def load_options(options={})
       return unless options
 
+      @app_name       = options[:app_name]       unless options[:app_name].nil?
       @asset_host     = options[:asset_host]     unless options[:asset_host].nil?
       @asset_version  = options[:asset_version]  unless options[:asset_version].nil?
       @deflate_assets = options[:deflate_assets] unless options[:deflate_assets].nil?
@@ -126,6 +127,10 @@ module Palmade::AssetPackager
       File.expand_path(ENV['ASSET_ROOT'] || '.')
     end
 
+    def default_asset_version
+      '0'
+    end
+
     def default_config_file
       File.join(asset_root, 'config', 'asset_packager.yml')
     end
@@ -136,6 +141,10 @@ module Palmade::AssetPackager
 
     def default_public_root
       File.expand_path(ENV['ASSET_PUBLIC_ROOT'] || File.join(asset_root, 'public'))
+    end
+
+    def default_package_path
+      File.join(@public_root, @package_dir)
     end
 
     def default_package_dir
