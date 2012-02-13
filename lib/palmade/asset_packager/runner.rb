@@ -6,6 +6,7 @@ module Palmade::AssetPackager
       @argv = argv
 
       @options = {}
+      @logger  = Palmade::AssetPackager.logger
 
       parse!
     end

@@ -1,39 +1,35 @@
 module Palmade::AssetPackager
-  class Configuration
-    attr_reader :app_name
-    attr_reader :asset_host
-    attr_reader :asset_root
-    attr_reader :asset_version
-    attr_reader :deflate_assets
-    attr_reader :minify_assets
-    attr_reader :package_assets
-    attr_reader :package_path
-    attr_reader :package_dir
-    attr_reader :public_root
-    attr_reader :options
-
-    alias :minify_assets?  :minify_assets
-    alias :package_assets? :package_assets
-    alias :deflate_assets? :deflate_assets
+  class Configuration < Hash
 
     def initialize(params = {})
-      @asset_root     = default_asset_root
-      @deflate_assets = true
-      @minify_assets  = true
-      @package_assets = true
-      @package_dir    = default_package_dir
-      @public_root    = default_public_root
-      @package_path   = default_package_path
-      @asset_version  = default_asset_version
+      @logger  = params.fetch(:logger) { Palmade::AssetPackager.logger }
 
-      @logger         = params.fetch(:logger) { Palmade::AssetPackager::logger }
+      self[:asset_root]     = default_asset_root
+      self[:package_dir]    = default_package_dir
+      self[:public_root]    = default_public_root
+      self[:package_path]   = default_package_path
+      self[:asset_version]  = default_asset_version
+      self[:asset_sources]  = []
+      self[:deflate_assets] = true
+      self[:minify_assets]  = true
+      self[:package_assets] = true
+    end
 
-      @options        = {}
+    def method_missing(sym, *args, &block)
+      if sym.to_s =~ /(.+)=$/
+        self[$1] = args.first
+      elsif keys.include? sym
+        self[sym]
+      else
+        super
+      end
+    end
+
+    def respond_to?(sym, include_private = false)
+      keys.include?(sym) || super
     end
 
     def load_configuration(options={})
-      @asset_root = options.fetch(:asset_root)  { default_asset_root }
-
       config_file = options.fetch(:config_file) { default_config_file }
       config_dir  = options.fetch(:config_dir)  { default_config_dir }
 
@@ -42,20 +38,25 @@ module Palmade::AssetPackager
       load_options(options)
     end
 
+    def deflate_assets?
+      self[:deflate_assets]
+    end
+
+    def minify_assets?
+      self[:minify_assets]
+    end
+
+    def package_assets?
+      self[:package_assets]
+    end
+
     private
 
     def load_options_from_configuration_files(config_file, config_dir)
-      conf_file = load_configuration_file(config_file)
-      conf_dir  = load_configuration_dir(config_dir)
+      conf_file = load_configuration_file(config_file) || {}
+      conf_dir  = load_configuration_dir(config_dir)   || {}
 
-      conf =
-        if conf_file and conf_dir
-          conf_file.merge(conf_dir)
-        elsif conf_file.nil? and conf_dir
-          conf_dir
-        else
-          conf_file
-        end
+      conf = conf_file.merge(conf_dir)
 
       load_options(conf)
     end
@@ -80,22 +81,10 @@ module Palmade::AssetPackager
       end.inject(:merge)
     end
 
-    ##
-    # Sets known options. Unknown options are stored in @options
-    #
     def load_options(options={})
       return unless options
 
-      @app_name       = options[:app_name]       unless options[:app_name].nil?
-      @asset_host     = options[:asset_host]     unless options[:asset_host].nil?
-      @asset_version  = options[:asset_version]  unless options[:asset_version].nil?
-      @deflate_assets = options[:deflate_assets] unless options[:deflate_assets].nil?
-      @minify_assets  = options[:minify_assets]  unless options[:minify_assets].nil?
-      @package_assets = options[:package_assets] unless options[:package_assets].nil?
-      @package_dir    = options[:package_dir]    unless options[:package_dir].nil?
-      @public_root    = options[:public_root]    unless options[:public_root].nil?
-
-      @options.merge!(options)
+      merge!(options)
     end
 
     def valid_config_file?(config_file)
@@ -132,19 +121,19 @@ module Palmade::AssetPackager
     end
 
     def default_config_file
-      File.join(asset_root, 'config', 'asset_packager.yml')
+      File.join(self[:asset_root], 'config', 'asset_packager.yml')
     end
 
     def default_config_dir
-      File.join(asset_root, 'config', 'asset_packages')
+      File.join(self[:asset_root], 'config', 'asset_packages')
     end
 
     def default_public_root
-      File.expand_path(ENV['ASSET_PUBLIC_ROOT'] || File.join(asset_root, 'public'))
+      File.expand_path(ENV['ASSET_PUBLIC_ROOT'] || File.join(self[:asset_root], 'public'))
     end
 
     def default_package_path
-      File.join(@public_root, @package_dir)
+      File.join(self[:public_root], self[:package_dir])
     end
 
     def default_package_dir

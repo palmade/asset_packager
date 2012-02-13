@@ -3,16 +3,17 @@ require 'spec_helper'
 module Palmade::AssetPackager
   describe Manager do
     let(:configuration) do
-      configuration = double(Configuration)
-      configuration.stub(:public_root)     { public_root }
-      configuration.stub(:package_dir)     { package_dir }
-      configuration.stub(:minify_assets?)  { false }
-      configuration.stub(:deflate_assets?) { false }
+      configuration = { :public_root      => public_root,
+                        :package_dir      => package_dir,
+                        :minify_assets?   => false,
+                        :deflate_assets?  => false,
+                        :package_assets?  => false,
+                        :base             => assets_fixture[:base],
+                        :signin           => assets_fixture[:signin] }
+      configuration.stub(:public_root)   { public_root }
+      configuration.stub(:package_dir)   { package_dir }
       configuration.stub(:package_assets?) { false }
-      configuration.stub(:options) do
-        {:base          => assets_fixture[:base],
-        :signin        => assets_fixture[:signin]}
-      end
+      configuration.stub(:deflate_assets?) { false }
       configuration
     end
 
@@ -20,8 +21,6 @@ module Palmade::AssetPackager
 
     before do
       Palmade::AssetPackager.stub(:configuration) { configuration }
-      Palmade::AssetPackager.stub(:public_root)   { public_root }
-      Palmade::AssetPackager.stub(:package_dir)   { package_dir }
     end
 
     describe "#asset_include" do
@@ -110,6 +109,7 @@ module Palmade::AssetPackager
 
         context "package assets enabled" do
           before do
+            configuration[:package_assets?] = true
             configuration.stub(:package_assets?) { true }
           end
 
@@ -126,6 +126,7 @@ module Palmade::AssetPackager
 
           context "deflate assets enabled" do
             before do
+              configuration[:deflate_assets?] = true
               configuration.stub(:deflate_assets?) { true }
             end
 

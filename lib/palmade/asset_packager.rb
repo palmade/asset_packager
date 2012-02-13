@@ -46,7 +46,7 @@ module Palmade
 
     def self.packager
       Thread.current[:asset_packager] ||= Packager.new(
-                                            :packages => self.configuration.options)
+                                            :packages => self.configuration)
     end
 
     def self.package!(options={})
