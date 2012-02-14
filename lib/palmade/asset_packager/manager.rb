@@ -4,9 +4,10 @@ module Palmade::AssetPackager
     attr_accessor :parents
 
     def initialize
-      @assets    = {}
-      @packager  = Palmade::AssetPackager.packager
-      @parents   = nil
+      @assets          = {}
+      @packager        = Palmade::AssetPackager.packager
+      @parents         = nil
+      @rendered_assets = []
     end
 
     def asset_include(type, *assets)
@@ -52,9 +53,15 @@ module Palmade::AssetPackager
         filtered_assets = filter_by_set(set.to_sym, filtered_assets)
       end
 
-      filtered_assets.map do |asset|
+      # Get asset paths
+      filtered_assets.map! do |asset|
         asset.paths(type)
-      end.flatten.uniq
+      end.flatten!.uniq!
+
+      # Remove already rendered assets (paths)
+      (filtered_assets - @rendered_assets).tap do |assets|
+        @rendered_assets.concat(assets)
+      end
     end
 
     private

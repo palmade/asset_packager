@@ -107,6 +107,27 @@ module Palmade::AssetPackager
           subject.get_assets(:javascripts).should_not include '/javascripts/doesnt_exists.js'
         end
 
+        context "multiple #get_assets calls," do
+          it "should list an asset only once" do
+            subject.get_assets(:javascripts).should include *all_assets
+            subject.get_assets(:javascripts).should be_empty
+          end
+
+          context "get assets for a package then get all other assets" do
+            it "should not include the package assets for the second call" do
+              signin_assets = subject.get_assets(:javascripts, :package => 'signin')
+              subject.get_assets(:javascripts).should_not include *signin_assets
+            end
+          end
+
+          context "get assets for a set, then get all other assets" do
+            it "should not include the single asset for the second call" do
+              top_assets = subject.get_assets(:javascripts, :set => 'top')
+              subject.get_assets(:javascripts).should_not include *top_assets
+            end
+          end
+        end
+
         context "package assets enabled" do
           before do
             configuration[:package_assets?] = true
@@ -114,14 +135,15 @@ module Palmade::AssetPackager
           end
 
           it "should return the url for the packed package asset" do
-            subject.get_assets(:javascripts).should include '/assets/javascripts/signin.js'
-            subject.get_assets(:javascripts).should include '/assets/javascripts/base.js'
+            assets = subject.get_assets(:javascripts)
+            assets.should include '/assets/javascripts/signin.js'
+            assets.should include '/assets/javascripts/base.js'
           end
 
           it "should not include the individual urls for the package" do
-            require 'pp'
-            subject.get_assets(:javascripts).should_not include url_assets_fixture(:signin)
-            subject.get_assets(:javascripts).should_not include url_assets_fixture(:base)
+            assets = subject.get_assets(:javascripts)
+            assets.should_not include url_assets_fixture(:signin)
+            assets.should_not include url_assets_fixture(:base)
           end
 
           context "deflate assets enabled" do
@@ -131,8 +153,9 @@ module Palmade::AssetPackager
             end
 
             it "should return the url for the deflated package asset" do
-              subject.get_assets(:javascripts).should include '/assets/javascripts/signin.js.z'
-              subject.get_assets(:javascripts).should include '/assets/javascripts/base.js.z'
+              assets = subject.get_assets(:javascripts)
+              assets.should include '/assets/javascripts/signin.js.z'
+              assets.should include '/assets/javascripts/base.js.z'
             end
 
             it "should not do anything to the non-package asset files" do
