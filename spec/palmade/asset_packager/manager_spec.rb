@@ -151,9 +151,18 @@ module Palmade::AssetPackager
         end
 
         context "a given `package` is specified" do
-          it "should only return the assets for the given package" do
-            assets = subject.get_assets(:javascripts, :package => :signin)
-            assets.should eql url_assets_fixture(:signin)[:javascripts]
+          context "symbol format" do
+            it "should only return the assets for the given package" do
+              assets = subject.get_assets(:javascripts, :package => :signin)
+              assets.should eql url_assets_fixture(:signin)[:javascripts]
+            end
+          end
+
+          context "string format" do
+            it "should only return the assets for the given package" do
+              assets = subject.get_assets(:javascripts, :package => 'signin')
+              assets.should eql url_assets_fixture(:signin)[:javascripts]
+            end
           end
         end
 

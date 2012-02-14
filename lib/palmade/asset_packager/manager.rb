@@ -44,7 +44,7 @@ module Palmade::AssetPackager
       return [] if filtered_assets.nil? or filtered_assets.empty?
 
       if package_name = options[:package]
-        filtered_assets = filter_by_package_name(package_name,
+        filtered_assets = filter_by_package_name(package_name.to_sym,
                                                  filtered_assets)
       end
 
