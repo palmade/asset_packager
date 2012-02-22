@@ -105,8 +105,13 @@ module Palmade::AssetPackager
     end
 
     def asset_before_render_hook(*params)
+      # active_layout for Rails 2.x contains the extension
+      active_layout_s   = active_layout.to_s
+      layout_asset_name = File.basename(active_layout_s,
+                                        File.extname(active_layout_s))
+
       [:javascripts, :stylesheets].each do |type|
-        asset_include type, "layouts/#{File.basename(active_layout.to_s)}", :set => 'default'
+        asset_include type, "layouts/#{layout_asset_name}", :set => 'default'
         asset_include type, "controllers/#{controller_path}"
       end
     end
