@@ -22,6 +22,7 @@ module Palmade::AssetPackager
       @name        = nil
       @set         = options.fetch(:set) { nil }
       @set         = @set.to_sym if @set
+      @logger      = Palmade::AssetPackager.logger
 
       initialize_asset options
     end
@@ -44,8 +45,13 @@ module Palmade::AssetPackager
                   "#{@name}")
 
       abs_path = add_extension_if_needed(abs_path, type)
-      exists?(abs_path) ? abs_path : nil
+      exists?(abs_path) ? abs_path : ((warn_missing name unless @set == :default) and nil)
     end
+
+    def warn_missing(name)
+      @logger.warn("Asset not found: #{name}")
+    end
+
 
     def initialize_asset(options)
       case __getobj__
@@ -57,7 +63,7 @@ module Palmade::AssetPackager
 
         __setobj__ @packager.packages[package_name]
 
-      when /^(?!package:)/
+      else
         @package = false
         @name    = self.to_s
       end

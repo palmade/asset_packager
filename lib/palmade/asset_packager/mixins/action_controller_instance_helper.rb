@@ -111,8 +111,8 @@ module Palmade::AssetPackager
                                         File.extname(active_layout_s))
 
       [:javascripts, :stylesheets].each do |type|
-        asset_include type, "layouts/#{layout_asset_name}", :set => 'default'
-        asset_include type, "controllers/#{controller_path}"
+        asset_include type, "layouts/#{layout_asset_name}",   :set => :default
+        asset_include type, "controllers/#{controller_path}", :set => :default
       end
     end
 
