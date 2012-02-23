@@ -10,9 +10,9 @@ module Palmade::AssetPackager
       self[:package_path]   = default_package_path
       self[:asset_version]  = default_asset_version
       self[:asset_sources]  = []
-      self[:deflate_assets] = true
-      self[:minify_assets]  = true
-      self[:package_assets] = true
+      self[:deflate_assets] = false
+      self[:minify_assets]  = false
+      self[:package_assets] = false
     end
 
     def method_missing(sym, *args, &block)
