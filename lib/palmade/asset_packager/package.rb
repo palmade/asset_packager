@@ -105,10 +105,10 @@ module Palmade::AssetPackager
     def load_dependencies
       return if @dependencies_loaded
 
-      dependencies.each do |type, deps|
-        deps.reverse_each do |dep|
-          @assets[type] = @packager.packages[dep][type] + @assets[type]
-        end
+      @assets.each do |type, assets_type|
+        assets_type.map! do |asset|
+          asset.respond_to?(:call) ? asset.call : asset
+        end.flatten!
       end
 
       @dependencies_loaded = true
@@ -118,15 +118,18 @@ module Palmade::AssetPackager
       @dependencies ||= {}
     end
 
-    ##
-    # Adds dependencies to be loaded after
-    #
     def add_dependencies(type, names)
       return unless names
 
-      dependencies[type] ||= []
-      dependencies[type] += names.map(&:to_sym)
-      dependencies[type].uniq!
+      dependencies[type] ||= {}
+
+      names.map!(&:to_sym)
+
+      lambda do
+        names.map(&:to_sym).map do |dep|
+          @packager.packages[dep][type]
+        end.flatten
+      end
     end
 
     private
@@ -175,7 +178,7 @@ module Palmade::AssetPackager
               @logger.error "Asset file not found: (#{abs_path})"
             end
           when Hash
-            add_dependencies(type, asset[:include])
+            a[type] << add_dependencies(type, asset[:include])
           end
         end
 
