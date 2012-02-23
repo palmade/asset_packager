@@ -63,7 +63,7 @@ module Palmade::AssetPackager
 
         __setobj__ @packager.packages[package_name]
 
-      else
+      when String, Symbol
         @package = false
         @name    = self.to_s
       end
