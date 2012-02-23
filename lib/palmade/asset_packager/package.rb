@@ -17,7 +17,10 @@ module Palmade::AssetPackager
     def assets
       load_dependencies
 
-      @assets
+      @assets.inject({}) do |h, (k, v)|
+        h[k] = v.flatten.uniq
+        h
+      end
     end
 
     def_delegator :assets, :[]
@@ -108,7 +111,7 @@ module Palmade::AssetPackager
       @assets.each do |type, assets_type|
         assets_type.map! do |asset|
           asset.respond_to?(:call) ? asset.call : asset
-        end.flatten!
+        end
       end
 
       @dependencies_loaded = true
@@ -128,7 +131,7 @@ module Palmade::AssetPackager
       lambda do
         names.map(&:to_sym).map do |dep|
           @packager.packages[dep][type]
-        end.flatten
+        end
       end
     end
 
@@ -182,7 +185,6 @@ module Palmade::AssetPackager
           end
         end
 
-        a[type] and not a[type].empty? and a[type].flatten!.uniq!
         @logger.debug "\tAdded #{a[type].count} #{type} for #{@name}" if a[type]
       end
       a
