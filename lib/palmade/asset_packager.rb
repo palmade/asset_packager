@@ -12,6 +12,7 @@ module Palmade
     autoload :Asset,         File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/asset')
     autoload :Bundler,       File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/bundler')
     autoload :Configuration, File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/configuration')
+    autoload :Deployer,      File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/deployer')
     autoload :Helpers,       File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/helpers')
     autoload :Manager,       File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/manager')
     autoload :Mixins,        File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/mixins')
@@ -22,8 +23,8 @@ module Palmade
     autoload :VERSION,       File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'asset_packager/version')
 
     class << self
-      attr_reader :configuration
-      attr_writer :logger
+      attr_accessor :configuration
+      attr_writer   :logger
     end
 
     def self.logger
@@ -56,6 +57,11 @@ module Palmade
     def self.bundle(options={})
       bundler = AssetPackager::Bundler.new(options)
       bundler.bundle
+    end
+
+    def self.deploy(options={})
+      deployer = AssetPackager::Deployer.new(options)
+      deployer.deploy
     end
 
   end

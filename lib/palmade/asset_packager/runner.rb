@@ -52,6 +52,8 @@ module Palmade::AssetPackager
         Palmade::AssetPackager.package!
       when 'bundle'
         Palmade::AssetPackager.bundle @options
+      when 'deploy'
+        Palmade::AssetPackager.deploy @options
       else
         @logger.error "Invalid command: #{@command}"
       end
