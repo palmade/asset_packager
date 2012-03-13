@@ -32,6 +32,9 @@ module Palmade::AssetPackager
     end
 
     def load_configuration(options={})
+      self[:asset_root]  = options.fetch(:asset_root)  { default_asset_root }
+      reload_asset_root_dependents
+
       config_file = options.fetch(:config_file) { default_config_file }
       config_dir  = options.fetch(:config_dir)  { default_config_dir }
 
@@ -53,6 +56,11 @@ module Palmade::AssetPackager
     end
 
     private
+
+    def reload_asset_root_dependents
+      self[:public_root]  = default_public_root
+      self[:package_path] = default_package_path
+    end
 
     def load_options_from_configuration_files(config_file, config_dir)
       conf_file = load_configuration_file(config_file) || {}
