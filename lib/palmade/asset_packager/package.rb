@@ -1,3 +1,6 @@
+require 'forwardable'
+require 'pathname'
+
 module Palmade::AssetPackager
   class Package
     extend Forwardable
