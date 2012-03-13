@@ -29,7 +29,7 @@ module Palmade::AssetPackager
     def_delegator :assets, :[]
 
     def packit(type, options={})
-      return nil unless @assets[type]
+      return nil unless assets[type]
 
       minify_assets = Palmade::AssetPackager.configuration.minify_assets?
 
@@ -38,7 +38,7 @@ module Palmade::AssetPackager
       @logger.info "\tPacking #{@name} #{type}"
 
       packer = get_packer(type)
-      packed = packer.concatenate(@assets[type]) unless @assets[type].nil?
+      packed = packer.concatenate(assets[type]) unless assets[type].nil?
       packed = packer.pack(packed) if minify_assets
 
       packed
