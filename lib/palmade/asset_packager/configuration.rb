@@ -32,6 +32,8 @@ module Palmade::AssetPackager
     end
 
     def load_configuration(options={})
+      @logger.info 'Loading configuration'
+
       self[:asset_root]  = options.fetch(:asset_root)  { default_asset_root }
       reload_asset_root_dependents
 
@@ -74,7 +76,7 @@ module Palmade::AssetPackager
     def load_configuration_file(config_file)
       return unless valid_config_file? config_file
 
-      @logger.info "Loading configuration file: #{config_file}"
+      @logger.debug "Loading configuration file: #{config_file}"
 
       parse_configuration_file(config_file)
     end
@@ -82,7 +84,7 @@ module Palmade::AssetPackager
     def load_configuration_dir(config_dir)
       return unless valid_config_dir? config_dir
 
-      @logger.info "Loading configuration files inside #{config_dir}"
+      @logger.debug "Loading configuration files inside #{config_dir}"
 
       config_files = Dir.glob(File.join(config_dir, '**', '*.yml')).sort
 

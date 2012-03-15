@@ -35,7 +35,7 @@ module Palmade::AssetPackager
 
       load_dependencies
 
-      @logger.info "\tPacking #{@name} #{type}"
+      @logger.debug "\tPacking #{@name} #{type}"
 
       packer = get_packer(type)
       packed = packer.concatenate(assets[type]) unless assets[type].nil?

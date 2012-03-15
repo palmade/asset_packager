@@ -22,10 +22,14 @@ module Palmade::AssetPackager
     end
 
     def bundle_apps(apps_root, apps)
+      @logger.info "Bundling apps"
+
       apps.each do |app|
         app_path = File.expand_path(File.join(apps_root, app))
 
         next unless File.exists?(app_path)
+
+        @logger.debug "Bundling #{app}"
 
         if bundler = fork
           Process.wait2(bundler)

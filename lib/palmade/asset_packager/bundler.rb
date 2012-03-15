@@ -32,8 +32,7 @@ module Palmade::AssetPackager
     def copy_asset_files(asset_sources = default_asset_sources)
       asset_sources.concat(configuration.asset_sources)
 
-      @logger.info "Copying the following asset sources to the bundle root: "
-      @logger.info "\t#{asset_sources.inspect}"
+      @logger.info "Copying the asset sources to the bundle root"
 
       asset_sources.each do |source|
         asset_type_dir = File.join(configuration.asset_root, source)
