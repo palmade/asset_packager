@@ -190,7 +190,7 @@ module Palmade::AssetPackager
           end
         end
 
-        @logger.debug "\tAdded #{a[type].count} #{type} for #{@name}" if a[type]
+        @logger.debug "\tAdded #{a[type].flatten.count} #{type} for #{@name}" if a[type]
       end
       a
     end
