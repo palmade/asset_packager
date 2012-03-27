@@ -3,6 +3,7 @@ require 'pathname'
 
 module Palmade::AssetPackager
   class Package
+    include Mixins::LegacyCompatibility
     extend Forwardable
 
     ASSET_EXTENSIONS = {:javascripts => 'js',
@@ -174,6 +175,7 @@ module Palmade::AssetPackager
               File.join(public_root, asset) :
               File.join(public_root, type.to_s, asset)
 
+            abs_path = change_pipes_to_commas(abs_path)
             abs_path = add_extension_if_needed(abs_path, type)
 
             found_assets = Dir.glob(abs_path)
