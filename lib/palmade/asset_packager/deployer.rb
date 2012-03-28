@@ -1,14 +1,18 @@
 module Palmade::AssetPackager
   class Deployer
-    def initialize(options)
-      @logger      = options.fetch(:logger) { Palmade::AssetPackager.logger }
+    def initialize(options, apps = nil)
+      @logger  = options.fetch(:logger) { Palmade::AssetPackager.logger }
+      @options = options.tap do |o|
+        o.delete(:config_file)
+      end
+
+      @apps    = get_apps(apps)
     end
 
     def deploy
       apps_root = get_apps_root
-      apps      = get_apps
 
-      bundle_apps(apps_root, apps)
+      bundle_apps(apps_root, @apps)
     end
 
     protected
@@ -17,8 +21,10 @@ module Palmade::AssetPackager
       Palmade::AssetPackager.configuration.apps_root
     end
 
-    def get_apps
-      Palmade::AssetPackager.configuration.apps
+    def get_apps(apps = nil)
+      (apps.nil? or apps.empty?) ?
+        Palmade::AssetPackager.configuration.apps :
+        apps
     end
 
     def bundle_apps(apps_root, apps)
@@ -27,7 +33,10 @@ module Palmade::AssetPackager
       apps.each do |app|
         app_path = File.expand_path(File.join(apps_root, app))
 
-        next unless File.exists?(app_path)
+        unless File.exists?(app_path)
+          @logger.error { "#{app_path} not found!" }
+          next
+        end
 
         @logger.debug "Bundling #{app}"
 
@@ -37,7 +46,7 @@ module Palmade::AssetPackager
           options = {
             :asset_root => app_path,
             :target_dir => File.expand_path('.')
-          }
+          }.merge(@options)
 
           new_configuration = Configuration.new
           new_configuration.load_configuration(options)

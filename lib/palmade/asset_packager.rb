@@ -59,8 +59,8 @@ module Palmade
       bundler.bundle
     end
 
-    def self.deploy(options={})
-      deployer = AssetPackager::Deployer.new(options)
+    def self.deploy(options={}, apps=nil)
+      deployer = AssetPackager::Deployer.new(options, apps)
       deployer.deploy
     end
 
