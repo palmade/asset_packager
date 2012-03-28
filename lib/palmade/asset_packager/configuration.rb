@@ -11,6 +11,7 @@ module Palmade::AssetPackager
       self[:public_root]    = default_public_root
       self[:package_path]   = default_package_path
       self[:asset_version]  = default_asset_version
+      self[:app_name]       = default_app_name
       self[:asset_sources]  = []
       self[:deflate_assets] = false
       self[:minify_assets]  = false
@@ -62,6 +63,7 @@ module Palmade::AssetPackager
     def reload_asset_root_dependents
       self[:public_root]  = default_public_root
       self[:package_path] = default_package_path
+      self[:app_name]     = default_app_name
     end
 
     def load_options_from_configuration_files(config_file, config_dir)
@@ -152,5 +154,10 @@ module Palmade::AssetPackager
       'assets'
     end
 
+    def default_app_name
+      File.basename(self[:asset_root])
+    end
+
   end
 end
+
