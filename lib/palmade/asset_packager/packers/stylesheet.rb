@@ -16,22 +16,10 @@ module Palmade::AssetPackager::Packers
     def read(filename, options={})
       relative_dir = File.dirname(filename)
       partial      = File.read(filename)
-      public_root  = options.fetch(:public_root) { Palmade::AssetPackager.configuration.public_root }
 
       partial.split(/[\n\r]/).collect do |line|
-        if asset_url = parse_asset_url(line) and not stylesheet_import?(line)
-          asset_dir = File.expand_path(File.dirname(asset_url), relative_dir)
-          asset     = File.basename(asset_url)
-          line.sub!(asset_url, File.join(calculate_asset_path(asset_dir),
-                                         asset))
-        elsif stylesheet_import?(line)
-          import_url = parse_asset_url(line)
-
-          import_absolute_path =
-            import_url =~ /^[\/].+/ ? File.join(public_root, import_url) : File.expand_path(import_url, relative_dir)
-
-          line = read(import_absolute_path) + "\n"
-        end
+        line = convert_uris(line, relative_dir)
+        line = convert_imports(line, relative_dir)
 
         line.strip
       end.join("\n")
@@ -62,18 +50,33 @@ module Palmade::AssetPackager::Packers
       asset_dir.relative_path_from(dummy_package_path).to_s
     end
 
-    def stylesheet_import?(line)
-      line =~ /^\@import\s+url\(\s*[\"\'](.+)[\"\']\s*\).*/ or
-        line =~ /^\@import\s+url\(\s*([^\"\']+\s*)\).*/
+    def convert_uris(css, relative_dir)
+      css.gsub(/url\(("([^"]*)"|'([^']*)'|([^)]*))\)/im) do
+        uri = $1.to_s
+        uri.gsub!(/["']+/, '')
+        # Don't process URLs that are already absolute
+        unless uri =~ /^[a-z]+\:\/\//i
+          asset_dir = File.expand_path(File.dirname(uri), relative_dir)
+          asset     = File.basename(uri)
+          uri       = File.join(calculate_asset_path(asset_dir), asset)
+        end
+        "url('#{uri.to_s}')"
+      end
     end
 
-    def parse_asset_url(line)
-      line =~ /url\(\s*[\"\']([^\/].+)[\"\']\s*\)/ or
-        line =~ /url\(\s*([^\/][^\"\']+)\s*\)/ or
-        line =~ /^\@import\s+url\(\s*[\"\'](.+)[\"\']\s*\).*/ or
-        line =~ /^\@import\s+url\(\s*([^\"\']+\s*)\).*/
+    def convert_imports(css, relative_dir)
+      package_path       = File.join(Palmade::AssetPackager.configuration.package_path, 'foo')
 
-      $1 rescue nil
+      css.gsub(/@import\s+url\(("([^"]*)"|'([^']*)'|([^)]*))\)/im) do
+        uri = $1.to_s
+        uri.gsub!(/["']+/, '')
+
+        # Recalculate absolute path to asset url
+        import_path = File.expand_path(uri, package_path)
+        "\n" + read(import_path) + "\n"
+      end
+
     end
+
   end
 end

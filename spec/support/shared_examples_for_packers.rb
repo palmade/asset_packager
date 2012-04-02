@@ -22,6 +22,8 @@ module Palmade::AssetPackager::Packers
           File.stub(:open).with(name, anything).and_yield(file)
           File.stub(:read).with(name) { contents }
         end
+
+        Palmade::AssetPackager.stub_chain(:configuration, :package_path) { '/foo/bar' }
       end
 
       it "should concatenate the sources" do
