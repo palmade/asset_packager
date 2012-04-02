@@ -4,8 +4,8 @@ module Palmade::AssetPackager
     def self.included(base)
       base.class_eval do
         hide_action :asset_manager, :javascript_include, :stylesheet_include, :asset_deflate_ok?,
-          :asset_include, :asset_managers, :compute_public_path,
-          :compute_asset_host, :compute_rails_asset_id
+          :asset_include, :asset_managers, :compute_public_path, :prevent_default_assets!,
+          :prevent_default_assets?, :compute_asset_host, :compute_rails_asset_id
 
         helper_method :javascript_include, :stylesheet_include, :asset_deflate_ok?, :asset_manager
 
@@ -105,6 +105,8 @@ module Palmade::AssetPackager
     end
 
     def asset_before_render_hook(*params)
+      return true if prevent_default_assets?
+
       # active_layout for Rails 2.x contains the extension
       active_layout_s   = active_layout.to_s
       layout_asset_name = File.basename(active_layout_s,
@@ -114,6 +116,16 @@ module Palmade::AssetPackager
         asset_include type, "layouts/#{layout_asset_name}",   :set => :default
         asset_include type, "controllers/#{controller_path}", :set => :default
       end
+    end
+
+    def prevent_default_assets!(val = true)
+      @prevent_default_assets = val
+    end
+
+    def prevent_default_assets?
+      @prevent_default_assets.nil? ?
+        self.class.prevent_default_assets? :
+        @prevent_default_assets
     end
 
   end

@@ -53,5 +53,12 @@ module Palmade::AssetPackager
       am.asset_include(asset_type, *sources)
     end
 
+    def prevent_default_assets!(val = true)
+      @prevent_default_assets = val
+    end
+
+    def prevent_default_assets?
+      @prevent_default_assets
+    end
   end
 end
