@@ -54,11 +54,12 @@ module Palmade::AssetPackager
     end
 
     def prevent_default_assets!(val = true)
-      @prevent_default_assets = val
+      self.prevent_default_assets = val
     end
 
     def prevent_default_assets?
-      @prevent_default_assets
+      not self.prevent_default_assets.nil?
     end
+
   end
 end

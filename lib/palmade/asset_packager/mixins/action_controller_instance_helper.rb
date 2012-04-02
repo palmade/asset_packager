@@ -3,6 +3,8 @@ module Palmade::AssetPackager
 
     def self.included(base)
       base.class_eval do
+        class_inheritable_accessor :prevent_default_assets
+
         hide_action :asset_manager, :javascript_include, :stylesheet_include, :asset_deflate_ok?,
           :asset_include, :asset_managers, :compute_public_path, :prevent_default_assets!,
           :prevent_default_assets?, :compute_asset_host, :compute_rails_asset_id
@@ -119,14 +121,13 @@ module Palmade::AssetPackager
     end
 
     def prevent_default_assets!(val = true)
-      @prevent_default_assets = val
+      self.class.prevent_default_assets!(val)
     end
 
     def prevent_default_assets?
-      @prevent_default_assets.nil? ?
-        self.class.prevent_default_assets? :
-        @prevent_default_assets
+      self.class.prevent_default_assets?
     end
 
   end
 end
+
