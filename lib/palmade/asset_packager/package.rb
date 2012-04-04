@@ -134,8 +134,10 @@ module Palmade::AssetPackager
 
       lambda do
         names.map(&:to_sym).map do |dep|
+          @logger.warn "No such package exists: #{dep}" and next unless @packager.packages[dep]
+          @logger.warn "Package `#{dep}` doesn't have any `#{type}` assets" and next unless @packager.packages[dep][type]
           @packager.packages[dep][type]
-        end
+        end.compact
       end
     end
 
