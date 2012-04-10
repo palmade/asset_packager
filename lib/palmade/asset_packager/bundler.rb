@@ -14,7 +14,8 @@ module Palmade::AssetPackager
       create_root
       copy_asset_files
 
-      Palmade::AssetPackager.package!(:package_path => File.join(@root, 'assets'))
+      package_dir = Palmade::AssetPackager.configuration.package_dir
+      Palmade::AssetPackager.package!(:package_path => File.join(@root, package_dir))
     end
 
     protected
