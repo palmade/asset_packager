@@ -41,10 +41,14 @@ module Palmade::AssetPackager::Packers
     # has been moved to the package_path
     #
     def calculate_asset_path(asset_dir)
+      compatibility_mode = Palmade::AssetPackager.configuration.compatibility_mode
       package_path       = Palmade::AssetPackager.configuration.package_path
 
       asset_dir          = Pathname.new(asset_dir) unless asset_dir.is_a?(Pathname)
       dummy_package_path = File.join(package_path, 'asset_type_here')
+
+      dummy_package_path = File.join(dummy_package_path, 'foo') if compatibility_mode
+
       dummy_package_path = Pathname.new(dummy_package_path)
 
       asset_dir.relative_path_from(dummy_package_path).to_s

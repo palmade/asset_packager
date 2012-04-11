@@ -16,6 +16,7 @@ module Palmade::AssetPackager
       self[:deflate_assets] = false
       self[:minify_assets]  = false
       self[:package_assets] = false
+      self[:compatibility_mode] = false
     end
 
     def method_missing(sym, *args, &block)

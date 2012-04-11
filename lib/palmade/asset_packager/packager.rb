@@ -21,8 +21,17 @@ module Palmade::AssetPackager
           options.fetch(:package_path) {
             Palmade::AssetPackager.configuration.package_path }
 
+        compatibility_mode = Palmade::AssetPackager.configuration.compatibility_mode
+
         package.assets.keys.each do |type|
-          cache(name, type, package.packit(type), output_dir)
+          final_output_dir =
+            if compatibility_mode
+              compat_output_dir(output_dir, type, name)
+            else
+              output_dir
+            end
+
+          cache(name, type, package.packit(type), final_output_dir)
         end
       end
 
@@ -32,7 +41,10 @@ module Palmade::AssetPackager
     def cache(package, type, contents, output_dir)
       @logger.info "Nothing to cache" and return if @packages.empty?
 
-      output_dir = File.join(output_dir, type.to_s)
+      compatibility_mode = Palmade::AssetPackager.configuration.compatibility_mode
+
+      output_dir = File.join(output_dir, type.to_s) unless compatibility_mode
+
       FileUtils.mkdir_p(output_dir) unless File.exists?(output_dir)
 
       filename = File.join(output_dir,
@@ -64,6 +76,12 @@ module Palmade::AssetPackager
     def is_package_hash?(hash)
       return false unless hash.is_a?(Hash)
       return (hash.include?(:javascripts) or hash.include?(:stylesheets))
+    end
+
+    def compat_output_dir(output_dir, type, package_name)
+      package_dir = Palmade::AssetPackager.configuration.package_dir
+
+      File.expand_path(File.join(output_dir, '..', type.to_s, package_dir.to_s, package_name.to_s))
     end
   end
 end
