@@ -53,10 +53,10 @@ module Palmade::AssetPackager
         filtered_assets = filter_by_set(set.to_sym, filtered_assets)
       end
 
-      # Get asset paths
-      filtered_assets.map! do |asset|
+      # Get asset paths and remove duplicates
+      filtered_assets = filtered_assets.map do |asset|
         asset.paths(type)
-      end.flatten!.uniq!
+      end.flatten.uniq
 
       # Remove already rendered assets (paths)
       (filtered_assets - @rendered_assets).tap do |assets|
