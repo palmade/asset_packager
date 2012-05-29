@@ -1,11 +1,11 @@
 module Palmade::AssetPackager
   module Mixins::ActionViewHelper
 
-    def javascript_tags(options = { })
+    def javascript_tags(options = {})
       asset_tags('javascripts', options)
     end
 
-    def stylesheet_tags(options = { })
+    def stylesheet_tags(options = {})
       asset_tags('stylesheets', options)
     end
 
@@ -17,18 +17,18 @@ module Palmade::AssetPackager
       assets = get_assets(asset_type, options)
 
       assets.collect do |asset|
-        render_asset(asset_type, asset)
+        render_asset(asset_type, asset, options)
       end.join("\n") unless assets.nil? or assets.empty?
     end
 
     private
 
-    def render_asset(asset_type, as)
+    def render_asset(asset_type, as, options = {})
       case asset_type
       when 'javascripts'
-        javascript_include_tag(as)
+        javascript_include_tag(as, options)
       when 'stylesheets'
-        stylesheet_link_tag(as)
+        stylesheet_link_tag(as, options)
       end
     end
 
