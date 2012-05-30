@@ -109,8 +109,8 @@ module Palmade::AssetPackager
     def asset_before_render_hook(*params)
       return true if prevent_default_assets?
 
-      render_params = params.shift
-      passed_layout = render_params[:layout]
+      render_params = Palmade::AssetPackager::Utils.extract_options!(params)
+      passed_layout = render_params && render_params[:layout]
 
       # active_layout for Rails 2.x contains the extension
       layout = active_layout(passed_layout).name
