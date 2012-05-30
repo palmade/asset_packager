@@ -113,10 +113,15 @@ module Palmade::AssetPackager
       passed_layout = render_params && render_params[:layout]
 
       # active_layout for Rails 2.x contains the extension
-      layout = active_layout(passed_layout).name
+      layout =
+        if al = active_layout(passed_layout)
+          al.name
+        else
+          nil
+        end
 
       [:javascripts, :stylesheets].each do |type|
-        asset_include type, "layouts/#{layout}",              :set => :default
+        asset_include type, "layouts/#{layout}",              :set => :default unless layout.nil?
         asset_include type, "controllers/#{controller_path}", :set => :default
       end
     end
