@@ -55,7 +55,7 @@ module Palmade::AssetPackager
 
     def initialize_asset(options)
       case __getobj__
-      when Hash, /^package:(\w+)$/
+      when Hash, /^package:\s*(\w+)\s*$/
         package_name  = ($1 or self[:package]).to_sym
 
         @package      = true
