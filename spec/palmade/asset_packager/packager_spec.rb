@@ -10,6 +10,7 @@ module Palmade::AssetPackager
       configuration.stub(:minify_assets?)  { false }
       configuration.stub(:deflate_assets?) { false }
       configuration.stub(:package_assets?) { false }
+      configuration.stub(:compatibility_mode) { false }
       configuration.stub(:options) do
         {:base          => assets_fixture[:base]}
       end
