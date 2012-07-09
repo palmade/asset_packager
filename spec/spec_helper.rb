@@ -36,6 +36,12 @@ module Helpers
                          'jquery.js',
                          'doesnt_exist.js',
                          '/absolute/package.js']
+      },
+      :leading_whitespace => {
+        :javascripts => ['leading_whitespace.js']
+      },
+      :trailing_whitespace => {
+        :javascripts => ['trailing_whitespace.js']
       }
     }
   end

@@ -3,13 +3,16 @@ require 'spec_helper'
 module Palmade::AssetPackager
   describe Manager do
     let(:configuration) do
-      configuration = { :public_root      => public_root,
-                        :package_dir      => package_dir,
-                        :minify_assets?   => false,
-                        :deflate_assets?  => false,
-                        :package_assets?  => false,
-                        :base             => assets_fixture[:base],
-                        :signin           => assets_fixture[:signin] }
+      configuration = { :public_root         => public_root,
+                        :package_dir         => package_dir,
+                        :minify_assets?      => false,
+                        :deflate_assets?     => false,
+                        :package_assets?     => false,
+                        :base                => assets_fixture[:base],
+                        :signin              => assets_fixture[:signin],
+                        :leading_whitespace  => assets_fixture[:leading_whitespace],
+                        :trailing_whitespace => assets_fixture[:trailing_whitespace]
+                      }
       configuration.stub(:public_root)   { public_root }
       configuration.stub(:package_dir)   { package_dir }
       configuration.stub(:package_assets?) { false }
@@ -50,7 +53,12 @@ module Palmade::AssetPackager
     describe "#get_assets" do
       context "multiple assets included in one #asset_include" do
         before do
-          subject.asset_include :javascripts, 'package:base', 'package:signin', 'no_package'
+          subject.asset_include :javascripts,
+                                      'package:base',
+                                      'package:signin',
+                                      'no_package',
+                                      'package: leading_whitespace',
+                                      'package:trailing_whitespace '
         end
 
         let(:all_assets) do
@@ -58,6 +66,8 @@ module Palmade::AssetPackager
           assets.concat(url_assets_fixture(:signin)[:javascripts])
           assets.concat(url_assets_fixture(:base)[:javascripts])
           assets.concat([no_package]).uniq
+          assets.concat(url_assets_fixture(:leading_whitespace)[:javascripts])
+          assets.concat(url_assets_fixture(:trailing_whitespace)[:javascripts])
         end
 
         it "should get all included assets" do
