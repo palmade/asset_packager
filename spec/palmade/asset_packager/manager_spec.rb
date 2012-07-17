@@ -46,7 +46,9 @@ module Palmade::AssetPackager
       end
 
       context "asset doesn't exist" do
-        it "should log an error"
+        it "should raise an error" do
+          lambda { subject.asset_include :javascripts, 'package:does_not_exist' }.should raise_error(ArgumentError, /not defined/)
+        end
       end
     end
 

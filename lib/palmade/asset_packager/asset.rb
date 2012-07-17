@@ -61,7 +61,10 @@ module Palmade::AssetPackager
         @package      = true
         @name         = package_name
 
-        __setobj__ @packager.packages[package_name]
+        @package_obj  = @packager.packages[package_name]
+        raise ArgumentError.new("Package #{@name} not defined") if @package_obj.nil?
+
+        __setobj__ @package_obj
 
       when String, Symbol
         @package = false
