@@ -16,6 +16,8 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = ['README', 'CHANGELOG', 'COPYING', 'LICENSE']
   s.rdoc_options     = ['--line-numbers', '--inline-source', '--title', 'asset_packager', '--main', 'README']
 
+  s.add_dependency 'jsminc', '= 1.1.1'
+
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'rake'
 end
