@@ -13,6 +13,7 @@ module Palmade::AssetPackager
 
       create_root
       copy_asset_files
+      deflate_asset_files
 
       package_dir = Palmade::AssetPackager.configuration.package_dir
       Palmade::AssetPackager.package!(:package_path => File.join(@root, package_dir))
@@ -28,6 +29,15 @@ module Palmade::AssetPackager
 
       @logger.info "Creating bundle root: #{root}"
       FileUtils.mkdir_p(root)
+    end
+
+    def deflate_asset_files(asset_sources = default_asset_sources)
+      asset_sources.each do |source|
+        pattern = File.join(configuration.asset_root, source, '**', '*{.css,.js}')
+        Dir.glob(pattern).find_all { |f| File.size(f) >= 150 }
+                         .each(&method(:deflate_asset_file))
+      end
+
     end
 
     def copy_asset_files(asset_sources = default_asset_sources)
@@ -50,6 +60,15 @@ module Palmade::AssetPackager
     end
 
     private
+
+    def deflate_asset_file(path)
+      File.open("#{path}.gz", 'wb+') do |f|
+        zd = Zlib::Deflate.new(Zlib::BEST_COMPRESSION, 15, Zlib::MAX_MEM_LEVEL)
+        # output raw deflate
+        f << zd.deflate(IO.binread(path), Zlib::FINISH)[2..-5]
+        zd.close
+      end
+    end
 
     def calculate_root
       @logger.error 'Please specify the app_name inside the configuration file(s)' unless configuration.app_name
