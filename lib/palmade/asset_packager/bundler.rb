@@ -62,7 +62,7 @@ module Palmade::AssetPackager
     private
 
     def deflate_asset_file(path)
-      File.open("#{path}.gz", 'wb+') do |f|
+      File.open("#{path}.z", 'wb+') do |f|
         zd = Zlib::Deflate.new(Zlib::BEST_COMPRESSION, 15, Zlib::MAX_MEM_LEVEL)
         # output raw deflate
         f << zd.deflate(IO.binread(path), Zlib::FINISH)[2..-5]
