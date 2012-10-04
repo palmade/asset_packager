@@ -34,8 +34,8 @@ module Palmade::AssetPackager
     def deflate_asset_files(asset_sources = default_asset_sources)
       asset_sources.each do |source|
         pattern = File.join(configuration.asset_root, source, '**', '*{.css,.js}')
-        Dir.glob(pattern).find_all { |f| File.size(f) >= 150 }
-                         .each(&method(:deflate_asset_file))
+        Dir.glob(pattern).find_all { |f| File.size(f) >= 150 }.
+                          each(&method(:deflate_asset_file))
       end
 
     end
@@ -62,12 +62,16 @@ module Palmade::AssetPackager
     private
 
     def deflate_asset_file(path)
+      asset_file = File.new(path, 'rb:ASCII-8BIT')
+
       File.open("#{path}.z", 'wb+') do |f|
         zd = Zlib::Deflate.new(Zlib::BEST_COMPRESSION, 15, Zlib::MAX_MEM_LEVEL)
         # output raw deflate
-        f << zd.deflate(IO.binread(path), Zlib::FINISH)[2..-5]
+        f << zd.deflate(asset_file.read, Zlib::FINISH)[2..-5]
         zd.close
       end
+
+      asset_file.close
     end
 
     def calculate_root
