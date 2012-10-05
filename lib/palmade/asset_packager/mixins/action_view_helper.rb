@@ -12,8 +12,6 @@ module Palmade::AssetPackager
     protected
 
     def asset_tags(asset_type, options)
-      options[:deflate_assets] = asset_deflate_ok?
-
       assets = get_assets(asset_type, options)
 
       assets.collect do |asset|
@@ -33,9 +31,11 @@ module Palmade::AssetPackager
     end
 
     def get_assets(asset_type, asset_options = {})
+      options = {:deflate_assets => asset_deflate_ok?}.merge(asset_options)
+
       asset_manager.nil? ? [] :
         asset_manager.get_assets(asset_type,
-                                 Palmade::AssetPackager::Utils.symbolize_keys(asset_options))
+                                 Palmade::AssetPackager::Utils.symbolize_keys(options))
     end
 
     # WATCH OUT!!!
