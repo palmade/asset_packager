@@ -1,24 +1,32 @@
-require 'rubygems'
-gem 'echoe'
-require 'echoe'
+require 'bundler/gem_tasks'
+require 'rspec/core/rake_task'
 
-Echoe.new("asset_packager") do |p|
-  p.author = "palmade"
-  p.project = "palmade"
-  p.summary = "An asset_packager for use with Rails and other frameworks"
+namespace :spec do
+  task :prep_rails1 do
+    puts 'Preparing environment for Rails 1.x RSpec code examples'
+    unless RUBY_VERSION =~ /^1\.8/
+      raise "Rails 1.x doesn't support Ruby versions other than 1.8.x"
+    end
+    ENV['RAILS_VERSION'] = '1'
+    `bundle`
+  end
 
-  p.need_tar_gz = false
-  p.need_tgz = true
+  task :prep_rails2 do
+    puts 'Preparing environment for Rails 2.x RSpec code examples'
+    ENV['RAILS_VERSION'] = '2'
+    `bundle`
+  end
 
-  p.clean_pattern += ["pkg", "lib/*.bundle", "*.gem", ".config"]
-  p.rdoc_pattern = ['README', 'LICENSE', 'COPYING', 'lib/**/*.rb', 'doc/**/*.rdoc']
+  desc 'Run RSpec code examples for Rails 1.x compatibility'
+  RSpec::Core::RakeTask.new(:rails1)
+  desc 'Run RSpec code examples for Rails 2.x compatibility'
+  RSpec::Core::RakeTask.new(:rails2)
+
+  Rake::Task[:rails1].enhance [:prep_rails1]
+
+  Rake::Task[:rails2].enhance [:prep_rails2]
 end
 
-gem 'rspec'
-require 'spec/rake/spectask'
-
-Spec::Rake::SpecTask.new do |t|
-  t.spec_opts.push("-f s")
-end
-
-task :default => [ :test, :spec ]
+desc 'Run RSpec code examples'
+task :spec        => ['spec:rails1', 'spec:rails2']
+task :default     => [:spec]

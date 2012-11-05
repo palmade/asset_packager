@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require 'palmade/asset_packager'
+
+Palmade::AssetPackager::Runner.new(ARGV).run

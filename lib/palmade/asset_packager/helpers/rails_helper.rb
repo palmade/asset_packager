@@ -1,24 +1,44 @@
-module Palmade::AssetPackager::Helpers
-  module RailsHelper
+module Palmade::AssetPackager
+  module Helpers::RailsHelper
     def self.setup(configuration)
+      add_configuration_options(configuration)
+      add_extensions(configuration)
+      load_rails_configuration(configuration)
+    end
+
+    protected
+
+    def self.load_rails_configuration(configuration)
+      asset_packager_config = Palmade::AssetPackager.configuration
+
+      if asset_version = asset_packager_config[:asset_version]
+        configuration.action_controller.asset_version = \
+            ActionController::Base.asset_version = asset_version
+      end
+
+      if asset_host = asset_packager_config[:asset_host]
+        configuration.action_controller.asset_host = \
+            ActionController::Base.asset_host = asset_host
+      end
+    end
+
+    def self.add_extensions(configuration)
       if configuration.frameworks.include?(:action_controller) &&
         configuration.frameworks.include?(:action_view)
-        require(File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'extend/action_controller/base'))
-        require(File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'extend/action_controller/instance'))
-        require(File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'extend/action_view/base'))
+
+        ActionController::Base.send(:extend, Mixins::ActionControllerHelper)
+        ActionController::Base.send(:include, Mixins::ActionControllerInstanceHelper)
+        ActionView::Base.send(:include, Mixins::ActionViewHelper)
 
         # include cell extensions
         configuration.after_initialize do
           if defined?(Palmade::Cells)
-            require(File.join(ASSET_PACKAGER_LIB_PALMADE_DIR, 'extend/cells/base'))
+            Palmade::Cells::Base.send(:include, Mixins::CellsHelper)
           end
         end
       end
     end
 
-    # this is called, right after the framework are loaded, to support the
-    # additional config options attached to the ActionController framework
-    # e.g. config.action_controller.asset_version = 0
     def self.add_configuration_options(configuration)
       if configuration.frameworks.include?(:action_controller)
         class << ActionController::Base
@@ -29,5 +49,6 @@ module Palmade::AssetPackager::Helpers
         end
       end
     end
+
   end
 end
